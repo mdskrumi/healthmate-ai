@@ -4,6 +4,7 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 
 const Dictaphone = () => {
+  const [summerize, setSummerize] = useState<string>("");
   const [speaker, setSpeaker] = useState<"Doctor" | "Patient" | "None">("None");
   const [message, setMessage] = useState<
     {
@@ -41,6 +42,27 @@ const Dictaphone = () => {
     }
   };
 
+  const onConversationSubmit = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/summarize/summarizes",
+        {
+          method: "POST",
+          body: JSON.stringify({ conversation: message }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      console.log({ data });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-center items-center gap-10 p-10">
@@ -73,10 +95,18 @@ const Dictaphone = () => {
         ))}
       </div>
       <div className="m-auto max-w-2xl w-[90vw] p-5">
-        <button className="ml-auto block max-w-sm p-4 border border-gray-200 rounded-xl shadow hover:bg-gray-100">
+        <button
+          className="ml-auto block max-w-sm p-4 border border-gray-200 rounded-xl shadow hover:bg-gray-100"
+          onClick={onConversationSubmit}
+        >
           SUBMIT
         </button>
       </div>
+      {summerize && (
+        <div className="m-auto max-w-2xl w-[90vw] border-2 p-5">
+          {summerize}
+        </div>
+      )}
     </div>
   );
 };
