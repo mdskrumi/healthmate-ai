@@ -22,7 +22,7 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { SvgIconComponent } from "@mui/icons-material";
 
-import { ArrowDropDown, VoiceChat, History } from "@mui/icons-material";
+import { KeyboardArrowDown, VoiceChat, History } from "@mui/icons-material";
 
 import logo from "../assets/logo.png";
 
@@ -53,6 +53,10 @@ const menus: IMenu[] = [
 const DashboardOutlet: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedMenu, setSelectedMenu] = useState<null | string>(null);
+
+  const userName = "Dr. Andreas";
+  const userMessage =
+    "I hope you are in good mood because many patients are waiting for you!";
 
   const navigate = useNavigate();
 
@@ -95,15 +99,13 @@ const DashboardOutlet: React.FC = () => {
             component="div"
             sx={{ flexGrow: 1, marginLeft: "16px" }}
           >
-            <div>Healthmate</div>
-            <div className="text-sm">AI solution for Doctor and Patioent</div>
+            <div>Good Morning, {userName}!</div>
+            <div className="text-sm text-gray-500">{userMessage}</div>
           </Typography>
           <div>
-            <IconButton size="large" edge="end" color="inherit">
-              <AccountCircleIcon />
-            </IconButton>
+            <AccountCircleIcon fontSize={"large"} />
             <IconButton
-              size="large"
+              size="small"
               edge="end"
               aria-label="account of current user"
               aria-controls="menu-appbar"
@@ -111,7 +113,7 @@ const DashboardOutlet: React.FC = () => {
               onClick={handleMenuOpen}
               color="inherit"
             >
-              <ArrowDropDown />
+              <KeyboardArrowDown />
             </IconButton>
           </div>
           <Menu

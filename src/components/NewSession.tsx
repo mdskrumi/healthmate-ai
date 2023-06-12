@@ -3,6 +3,8 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
+import PatientForm from "./PatientForm";
+
 const NewSession = () => {
   const [summerize, setSummerize] = useState<string>("");
   const [speaker, setSpeaker] = useState<"Doctor" | "Patient" | "None">("None");
@@ -65,6 +67,9 @@ const NewSession = () => {
 
   return (
     <div>
+      <div className="flex justify-center items-center gap-10 p-10">
+        <PatientForm />
+      </div>
       <div className="flex justify-center items-center gap-10 p-10">
         <button
           onClick={() => handleSpeakerChange("Doctor")}
