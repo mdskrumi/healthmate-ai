@@ -186,15 +186,6 @@ const SessionHistory = () => {
                 <TextField {...params} label="Type patient name" />
               )}
             />
-            {/* <div className="pt-5 pb-5">
-                <Button
-                  variant="outlined"
-                  onClick={handleSessionAction}
-                  disabled={!Boolean(value && value.name)}
-                >
-                  {sessionStarted ? "End Session" : "Start Session"}
-                </Button>
-              </div> */}
           </div>
           {value && value.name && (
             <TableContainer component={Paper}>

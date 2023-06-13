@@ -73,7 +73,6 @@ const PatientForm: React.FC = () => {
             };
             setPatients([...patients, newPatient]);
             setValue(newPatient);
-            console.log("Added new Patient:", newPatient.name);
             setOpen(true);
           } else {
             setValue(newValue);

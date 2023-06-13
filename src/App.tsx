@@ -13,7 +13,7 @@ function App() {
             <Route path={"session"} element={<NewSession />} />
             <Route path={"history"} element={<SessionHistory />} />
           </Route>
-          <Route path="*" element={<Navigate to={"/"} />} />
+          <Route path="*" element={<Navigate to={"/"} replace={true} />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -9,8 +9,6 @@ export const fetchPatinets = async () => {
       },
     });
     const jsonPatinets = await response.json();
-    // setPatinets(jsonPatinets);
-    console.log("patients", jsonPatinets);
     if (jsonPatinets?.data?.results) {
       return jsonPatinets?.data?.results;
     }
@@ -31,8 +29,6 @@ export const createPatinet = async (data: { name: string }) => {
       body: JSON.stringify(data),
     });
     const jsonPatinets = await response.json();
-    // setPatinets(jsonPatinets);
-    console.log("patients", jsonPatinets);
     if (jsonPatinets?.name) {
       return jsonPatinets;
     }
