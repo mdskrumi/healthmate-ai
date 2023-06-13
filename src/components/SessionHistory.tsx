@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -15,7 +15,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 
-import initialPatients from "../data/patients";
+import { fetchPatinets } from "../api/patients";
 
 interface PatientOptionType {
   inputValue?: string;
@@ -127,8 +127,17 @@ const rows = [
 
 const SessionHistory = () => {
   const [value, setValue] = React.useState<PatientOptionType | null>(null);
-  const [patients, setPatients] =
-    useState<PatientOptionType[]>(initialPatients);
+  const [patients, setPatients] = useState<PatientOptionType[]>([]);
+
+  useEffect(() => {
+    fetchPatinets()
+      .then((data) => {
+        setPatients(data);
+      })
+      .catch((error) => {
+        console.log("Error fetching patients", error);
+      });
+  }, []);
 
   return (
     <div>

@@ -2,17 +2,16 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
-// import PatientForm from "./PatientForm";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import { Button } from "@mui/material";
 import { ArrowBackIos } from "@mui/icons-material";
-
-import initialPatients from "../data/patients";
+import { createPatinet, fetchPatinets } from "../api/patients";
 
 interface PatientOptionType {
   inputValue?: string;
+  id?: number;
   name: string;
 }
 
@@ -21,10 +20,14 @@ const filter = createFilterOptions<PatientOptionType>();
 const NewSession = () => {
   const [value, setValue] = React.useState<PatientOptionType | null>(null);
 
+  const [refreshPatients, setRefreshPatients] = useState(true);
+
   const [sessionStarted, setSessionStarted] = useState(false);
 
-  const [patients, setPatients] =
-    useState<PatientOptionType[]>(initialPatients);
+  const [patients, setPatients] = useState<PatientOptionType[]>([]);
+
+  // const data = useFetchPatinets();
+
   const [summerize, setSummerize] = useState<string>("");
   const [speaker, setSpeaker] = useState<"Doctor" | "Patient" | "None">("None");
   const [message, setMessage] = useState<
@@ -36,10 +39,6 @@ const NewSession = () => {
 
   const { transcript, resetTranscript, browserSupportsSpeechRecognition } =
     useSpeechRecognition();
-
-  if (!browserSupportsSpeechRecognition) {
-    return <span>Browser doesn't support speech recognition.</span>;
-  }
 
   const handleSpeakerChange = (person: "Doctor" | "Patient") => {
     if (speaker !== "None") {
@@ -92,6 +91,23 @@ const NewSession = () => {
     }
   };
 
+  useEffect(() => {
+    if (refreshPatients) {
+      fetchPatinets()
+        .then((data) => {
+          setPatients(data);
+          setRefreshPatients(false);
+        })
+        .catch((error) => {
+          console.log("Error fetching patients", error);
+        });
+    }
+  }, [refreshPatients]);
+
+  if (!browserSupportsSpeechRecognition) {
+    return <span>Browser doesn't support speech recognition.</span>;
+  }
+
   return (
     <div>
       <div className="flex flex-col">
@@ -114,9 +130,14 @@ const NewSession = () => {
                     const newPatient = {
                       name: newValue.inputValue,
                     };
-                    setPatients([...patients, newPatient]);
+                    createPatinet(newPatient)
+                      .then((data) => {
+                        setRefreshPatients(true);
+                      })
+                      .catch((error) => {
+                        console.log("Error creating new patient:", error);
+                      });
                     setValue(newPatient);
-                    console.log("Added new Patient:", newPatient.name);
                   } else {
                     setValue(newValue);
                   }
@@ -190,7 +211,7 @@ const NewSession = () => {
               {value && (
                 <div className="w-full pb-5">
                   <p className="text-lg">
-                    Session With{" "}
+                    Session with{" "}
                     <span className="text-blue-500">{value.name}</span>
                   </p>
                 </div>
@@ -235,12 +256,6 @@ const NewSession = () => {
             ))}
           </div>
           <div className="m-auto text-right max-w-2xl w-[90vw] pt-5">
-            {/* <button
-              className="ml-auto block max-w-sm p-4 border border-gray-200 rounded-xl shadow hover:bg-gray-100"
-              onClick={onConversationSubmit}
-            >
-              SUBMIT
-            </button> */}
             <Button variant="outlined" onClick={onConversationSubmit}>
               SUBMIT
             </Button>
