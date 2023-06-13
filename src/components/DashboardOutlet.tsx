@@ -20,17 +20,22 @@ import {
   MenuItem,
 } from "@mui/material";
 // import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { SvgIconComponent, AccountCircleTwoTone } from "@mui/icons-material";
-
 import {
-  // KeyboardArrowDown,
-  VoiceChat,
-  History,
+  SvgIconComponent,
+  AccountCircleTwoTone,
+  MedicalInformation,
+  LocalHospital,
 } from "@mui/icons-material";
+
+// import {
+//   // KeyboardArrowDown,
+//   VoiceChat,
+//   History,
+// } from "@mui/icons-material";
 
 import logo from "../assets/logo.png";
 
-const drawerWidth = 240;
+const drawerWidth = 210;
 
 interface IMenu {
   id: string;
@@ -44,13 +49,15 @@ const menus: IMenu[] = [
     id: "session",
     title: "New Session",
     url: "/session",
-    icon: VoiceChat,
+    // icon: VoiceChat,
+    icon: LocalHospital,
   },
   {
     id: "history",
     title: "Session History",
     url: "/history",
-    icon: History,
+    // icon: History,
+    icon: MedicalInformation,
   },
 ];
 
@@ -58,7 +65,7 @@ const DashboardOutlet: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedMenu, setSelectedMenu] = useState<null | string>(null);
 
-  const userName = "Dr. Andreas";
+  const userName = "Doctor";
   const userMessage =
     "I hope you are in good mood because many patients are waiting for you!";
 
@@ -94,9 +101,8 @@ const DashboardOutlet: React.FC = () => {
           width: `calc(100% - ${drawerWidth}px)`,
           ml: `${drawerWidth}px`,
         }}
-        color="default"
-        // elevation={1}
-        style={{ boxShadow: "none" }}
+        color={"inherit"}
+        elevation={0}
       >
         <Toolbar>
           <Typography
@@ -168,7 +174,15 @@ const DashboardOutlet: React.FC = () => {
                 selectedMenu && selectedMenu === item.id ? "bg-gray-100" : ""
               }
             >
-              <ListItemButton onClick={() => handleOnMenuSelected(item)}>
+              <ListItemButton
+                onClick={() => handleOnMenuSelected(item)}
+                sx={{
+                  "& .MuiListItemIcon-root, & .MuiListItemText-root": {
+                    gap: 0,
+                    minWidth: "35px",
+                  },
+                }}
+              >
                 <ListItemIcon>{<item.icon />}</ListItemIcon>
                 <ListItemText primary={item.title} />
               </ListItemButton>

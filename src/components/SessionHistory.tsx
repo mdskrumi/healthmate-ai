@@ -136,7 +136,7 @@ const SessionHistory = () => {
         <div className="w-full">
           <div className="pb-10">
             <div className="w-full pb-5">
-              <h3>Please Select Patient:</h3>
+              <h3>Please select a patient:</h3>
             </div>
 
             <Autocomplete
@@ -174,7 +174,7 @@ const SessionHistory = () => {
               sx={{ width: 300 }}
               freeSolo
               renderInput={(params) => (
-                <TextField {...params} label="Patient Name" />
+                <TextField {...params} label="Type patient name" />
               )}
             />
             {/* <div className="pt-5 pb-5">
