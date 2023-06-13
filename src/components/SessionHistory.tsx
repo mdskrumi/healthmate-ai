@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -12,6 +12,17 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+
+import initialPatients from "../data/patients";
+
+interface PatientOptionType {
+  inputValue?: string;
+  name: string;
+}
+
+const filter = createFilterOptions<PatientOptionType>();
 
 function createData(
   name: string,
@@ -115,26 +126,91 @@ const rows = [
 ];
 
 const SessionHistory = () => {
+  const [value, setValue] = React.useState<PatientOptionType | null>(null);
+  const [patients, setPatients] =
+    useState<PatientOptionType[]>(initialPatients);
+
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <Row key={row.name} row={row} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <div>
+      <div className="flex flex-col">
+        <div className="w-full">
+          <div className="pb-10">
+            <div className="w-full pb-5">
+              <h3>Please Select Patient:</h3>
+            </div>
+
+            <Autocomplete
+              value={value}
+              onChange={(event, newValue) => {
+                if (typeof newValue === "string") {
+                  setValue({
+                    name: newValue,
+                  });
+                } else {
+                  setValue(newValue);
+                }
+              }}
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+                return filtered;
+              }}
+              selectOnFocus
+              clearOnBlur
+              handleHomeEndKeys
+              id="free-solo-with-text-demo"
+              options={patients}
+              getOptionLabel={(option) => {
+                // Value selected with enter, right from the input
+                if (typeof option === "string") {
+                  return option;
+                }
+
+                // Regular option
+                return option.name;
+              }}
+              renderOption={(props, option) => (
+                <li {...props}>{option.name}</li>
+              )}
+              sx={{ width: 300 }}
+              freeSolo
+              renderInput={(params) => (
+                <TextField {...params} label="Patient Name" />
+              )}
+            />
+            {/* <div className="pt-5 pb-5">
+                <Button
+                  variant="outlined"
+                  onClick={handleSessionAction}
+                  disabled={!Boolean(value && value.name)}
+                >
+                  {sessionStarted ? "End Session" : "Start Session"}
+                </Button>
+              </div> */}
+          </div>
+          {value && value.name && (
+            <TableContainer component={Paper}>
+              <Table aria-label="collapsible table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell />
+                    <TableCell>Dessert (100g serving)</TableCell>
+                    <TableCell align="right">Calories</TableCell>
+                    <TableCell align="right">Fat&nbsp;(g)</TableCell>
+                    <TableCell align="right">Carbs&nbsp;(g)</TableCell>
+                    <TableCell align="right">Protein&nbsp;(g)</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rows.map((row) => (
+                    <Row key={row.name} row={row} />
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

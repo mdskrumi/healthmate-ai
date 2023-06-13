@@ -1,4 +1,3 @@
-import Dictaphone from "./components/dictaphone";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import DashboardOutlet from "./components/DashboardOutlet";
 import NewSession from "./components/NewSession";
@@ -10,7 +9,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path={"/"} element={<DashboardOutlet />}>
-            <Route path={"/"} element={<Dictaphone />} />
+            <Route path={"/"} element={<Navigate to={"session"} />} />
             <Route path={"session"} element={<NewSession />} />
             <Route path={"history"} element={<SessionHistory />} />
           </Route>

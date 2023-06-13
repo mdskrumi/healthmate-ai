@@ -15,14 +15,18 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  IconButton,
+  // IconButton,
   Menu,
   MenuItem,
 } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { SvgIconComponent } from "@mui/icons-material";
+// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { SvgIconComponent, AccountCircleTwoTone } from "@mui/icons-material";
 
-import { KeyboardArrowDown, VoiceChat, History } from "@mui/icons-material";
+import {
+  // KeyboardArrowDown,
+  VoiceChat,
+  History,
+} from "@mui/icons-material";
 
 import logo from "../assets/logo.png";
 
@@ -62,9 +66,9 @@ const DashboardOutlet: React.FC = () => {
 
   const location = useLocation();
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -89,9 +93,10 @@ const DashboardOutlet: React.FC = () => {
         sx={{
           width: `calc(100% - ${drawerWidth}px)`,
           ml: `${drawerWidth}px`,
-          // backgroundColor: "trans",
         }}
         color="default"
+        // elevation={1}
+        style={{ boxShadow: "none" }}
       >
         <Toolbar>
           <Typography
@@ -100,11 +105,12 @@ const DashboardOutlet: React.FC = () => {
             sx={{ flexGrow: 1, marginLeft: "16px" }}
           >
             <div>Good Morning, {userName}!</div>
-            <div className="text-sm text-gray-500">{userMessage}</div>
+            <div className="text-sm">{userMessage}</div>
           </Typography>
           <div>
-            <AccountCircleIcon fontSize={"large"} />
-            <IconButton
+            {/* <AccountCircleIcon fontSize={"large"} /> */}
+            <AccountCircleTwoTone fontSize={"large"} color={"disabled"} />
+            {/* <IconButton
               size="small"
               edge="end"
               aria-label="account of current user"
@@ -114,7 +120,7 @@ const DashboardOutlet: React.FC = () => {
               color="inherit"
             >
               <KeyboardArrowDown />
-            </IconButton>
+            </IconButton> */}
           </div>
           <Menu
             id="menu-appbar"
@@ -135,6 +141,7 @@ const DashboardOutlet: React.FC = () => {
             <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
           </Menu>
         </Toolbar>
+        <Divider />
       </AppBar>
       <Drawer
         sx={{
@@ -149,9 +156,7 @@ const DashboardOutlet: React.FC = () => {
         anchor="left"
       >
         <Toolbar>
-          <div onClick={() => navigate("/")}>
-            <img src={logo} alt="Logo" />
-          </div>
+          <img src={logo} alt="Logo" />
         </Toolbar>
         <Divider />
         <List>
