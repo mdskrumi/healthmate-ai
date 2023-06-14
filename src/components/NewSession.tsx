@@ -11,6 +11,7 @@ import { createPatinet, fetchPatinets } from "../api/patients";
 import { sendConversation } from "../api/conversations";
 import Loading from "./Loading";
 import ErrorMessageComponent from "./ErrorMessageComponent";
+import ListeningComponent from "./ListeningComponent";
 
 interface PatientOptionType {
   inputValue?: string;
@@ -230,7 +231,7 @@ const NewSession = () => {
               </div>
               {patient && (
                 <div className="w-full pb-5">
-                  <p className="text-lg">
+                  <p className="text-2xl">
                     Session with{" "}
                     <span className="text-blue-500">{patient.name}</span>
                   </p>
@@ -242,27 +243,20 @@ const NewSession = () => {
       </div>
       {patient && patient.name && sessionStarted && (
         <>
+          <div className="flex justify-center items-center">
+            <p className="text-2xl">Conversation between Doctor and Patient</p>
+          </div>
           <div className="flex justify-center items-center gap-10 p-10">
-            <button
+            <ListeningComponent
+              isActive={speaker === "Doctor"}
+              speaker="DOCTOR"
               onClick={() => handleSpeakerChange("Doctor")}
-              className={`block max-w-sm p-6 border border-gray-200 rounded-3xl shadow ${
-                speaker === "Doctor"
-                  ? "bg-green-300"
-                  : "bg-white hover:bg-gray-100"
-              }`}
-            >
-              <h2 className="font-bold p-10">DOCTOR</h2>
-            </button>
-            <button
+            />
+            <ListeningComponent
+              isActive={speaker === "Patient"}
+              speaker="PATIENT"
               onClick={() => handleSpeakerChange("Patient")}
-              className={`block max-w-sm p-6 border border-gray-200 rounded-3xl shadow ${
-                speaker === "Patient"
-                  ? "bg-green-300"
-                  : "bg-white hover:bg-gray-100"
-              }`}
-            >
-              <h2 className="font-bold p-10">PATIENT</h2>
-            </button>
+            />
           </div>
 
           <div className="m-auto max-w-2xl w-[90vw] border-2 p-5">

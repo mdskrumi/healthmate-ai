@@ -111,7 +111,7 @@ const SessionHistory = () => {
           <div className="w-2/3 ">
             {patient && (
               <div className="w-full pb-5 ">
-                <p className="text-lg text-center">
+                <p className="text-2xl ">
                   Session history of {""}
                   <span className="text-blue-500">{patient.name}</span>
                 </p>
