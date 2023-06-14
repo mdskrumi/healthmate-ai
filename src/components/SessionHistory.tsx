@@ -5,6 +5,8 @@ import TextField from "@mui/material/TextField";
 import { fetchPatinets } from "../api/patients";
 import { getSummarizeOfPatient, ISummarize } from "../api/conversations";
 import { SummaryCard } from "./SummaryCard";
+import Loading from "./Loading";
+import ErrorMessageComponent from "./ErrorMessageComponent";
 
 interface PatientOptionType {
   id: number;
@@ -15,18 +17,27 @@ interface PatientOptionType {
 const filter = createFilterOptions<PatientOptionType>();
 
 const SessionHistory = () => {
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [patient, setPatient] = React.useState<PatientOptionType | null>(null);
   const [patients, setPatients] = useState<PatientOptionType[]>([]);
 
   const [summarizes, setSummarizes] = useState<ISummarize[]>([]);
 
   useEffect(() => {
+    setErrorMessage("");
+    setIsLoading(true);
     fetchPatinets()
       .then((data) => {
         setPatients(data);
       })
       .catch((error) => {
         console.log("Error fetching patients", error);
+        setErrorMessage("Something went wrong during fetching patients");
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
@@ -34,6 +45,8 @@ const SessionHistory = () => {
     <div>
       <div className="flex flex-col">
         <div className="w-full">
+          <Loading isLoading={isLoading} />
+          <ErrorMessageComponent message={errorMessage} />
           <div className="pb-10">
             <div className="w-full pb-5">
               <h3>Please select a patient:</h3>
@@ -46,6 +59,8 @@ const SessionHistory = () => {
                   // ignore other
                 } else if (newValue) {
                   setPatient(newValue);
+                  setIsLoading(true);
+                  setErrorMessage("");
                   getSummarizeOfPatient(newValue.id)
                     .then((data: { results?: ISummarize[] }) => {
                       console.log("summary res:", data);
@@ -56,6 +71,12 @@ const SessionHistory = () => {
                         "Error in fetching summarize of patient:",
                         error
                       );
+                      setErrorMessage(
+                        "Something went wrong during fetching patient information"
+                      );
+                    })
+                    .finally(() => {
+                      setIsLoading(false);
                     });
                 }
               }}

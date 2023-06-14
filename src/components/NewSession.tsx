@@ -9,6 +9,8 @@ import { Button } from "@mui/material";
 import { ArrowBackIos } from "@mui/icons-material";
 import { createPatinet, fetchPatinets } from "../api/patients";
 import { sendConversation } from "../api/conversations";
+import Loading from "./Loading";
+import ErrorMessageComponent from "./ErrorMessageComponent";
 
 interface PatientOptionType {
   inputValue?: string;
@@ -19,6 +21,9 @@ interface PatientOptionType {
 const filter = createFilterOptions<PatientOptionType>();
 
 const NewSession = () => {
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [patient, setPatient] = React.useState<PatientOptionType | null>(null);
 
   const [refreshPatients, setRefreshPatients] = useState(true);
@@ -59,6 +64,7 @@ const NewSession = () => {
 
   const onConversationSubmit = async () => {
     try {
+      setIsLoading(true);
       if (!patient?.id) {
         return;
       }
@@ -69,8 +75,12 @@ const NewSession = () => {
 
       console.log("response at onConversationSubmit", response);
       setSummerize(response.summarize);
+      setErrorMessage("");
     } catch (err) {
       console.log(err);
+      setErrorMessage("Something went wrong during submit conversation.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -88,13 +98,21 @@ const NewSession = () => {
 
   useEffect(() => {
     if (refreshPatients) {
+      setIsLoading(true);
       fetchPatinets()
         .then((data) => {
           setPatients(data);
           setRefreshPatients(false);
+          setErrorMessage("");
         })
         .catch((error) => {
           console.log("Error fetching patients", error);
+          setErrorMessage(
+            "Something went wrong during fetching patients information."
+          );
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
   }, [refreshPatients]);
@@ -107,6 +125,8 @@ const NewSession = () => {
     <div>
       <div className="flex flex-col">
         <div className="w-full">
+          <Loading isLoading={isLoading} />
+          <ErrorMessageComponent message={errorMessage} />
           {!sessionStarted ? (
             <>
               <div className="w-full pb-5">
@@ -125,13 +145,18 @@ const NewSession = () => {
                     const newPatient = {
                       name: newValue.inputValue,
                     };
+                    setIsLoading(true);
                     createPatinet(newPatient)
                       .then((data) => {
                         setRefreshPatients(true);
                         setPatient(data);
+                        setErrorMessage("");
                       })
                       .catch((error) => {
                         console.log("Error creating new patient:", error);
+                      })
+                      .finally(() => {
+                        setIsLoading(false);
                       });
                   } else {
                     setPatient(newValue);

@@ -34,11 +34,10 @@ export const sendConversation = async (data: ISendConversation) => {
     });
 
     const jsonResponse = await response.json();
-
-    console.log({ jsonResponse });
     return jsonResponse;
   } catch (err) {
     console.log(err);
+    throw Error("Error during conversation submitting");
   }
 };
 
