@@ -110,7 +110,7 @@ const DashboardOutlet: React.FC = () => {
             component="div"
             sx={{ flexGrow: 1, marginLeft: "16px" }}
           >
-            <div>Good Morning, {userName}!</div>
+            <div>Greetings, {userName}!</div>
             <div className="text-sm">{userMessage}</div>
           </Typography>
           <div>

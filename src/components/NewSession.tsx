@@ -8,6 +8,7 @@ import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import { Button } from "@mui/material";
 import { ArrowBackIos } from "@mui/icons-material";
 import { createPatinet, fetchPatinets } from "../api/patients";
+import { sendConversation } from "../api/conversations";
 
 interface PatientOptionType {
   inputValue?: string;
@@ -25,8 +26,6 @@ const NewSession = () => {
   const [sessionStarted, setSessionStarted] = useState(false);
 
   const [patients, setPatients] = useState<PatientOptionType[]>([]);
-
-  // const data = useFetchPatinets();
 
   const [summerize, setSummerize] = useState<string>("");
   const [speaker, setSpeaker] = useState<"Doctor" | "Patient" | "None">("None");
@@ -60,20 +59,16 @@ const NewSession = () => {
 
   const onConversationSubmit = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/summarize/summarizes",
-        {
-          method: "POST",
-          body: JSON.stringify({ conversation: message }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      if (!value?.id) {
+        return;
+      }
+      const response = await sendConversation({
+        conversation: message,
+        patient: value.id,
+      });
 
-      const data = await response.json();
-
-      console.log({ data });
+      console.log("response at onConversationSubmit", response);
+      setSummerize(response.summarize);
     } catch (err) {
       console.log(err);
     }
@@ -133,11 +128,11 @@ const NewSession = () => {
                     createPatinet(newPatient)
                       .then((data) => {
                         setRefreshPatients(true);
+                        setValue(data);
                       })
                       .catch((error) => {
                         console.log("Error creating new patient:", error);
                       });
-                    setValue(newPatient);
                   } else {
                     setValue(newValue);
                   }
@@ -262,8 +257,11 @@ const NewSession = () => {
           </div>
 
           {summerize && (
-            <div className="m-auto max-w-2xl w-[90vw] border-2 p-5">
-              {summerize}
+            <div
+              className="m-auto max-w-2xl w-[90vw] border-2 p-5"
+              dangerouslySetInnerHTML={{ __html: summerize }}
+            >
+              {/* {summerize} */}
             </div>
           )}
         </>

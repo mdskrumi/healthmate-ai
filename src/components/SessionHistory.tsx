@@ -16,8 +16,10 @@ import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 
 import { fetchPatinets } from "../api/patients";
+import { getSummarizeList, getSummarizeOfPatient } from "../api/conversations";
 
 interface PatientOptionType {
+  id: number;
   inputValue?: string;
   name: string;
 }
@@ -152,11 +154,19 @@ const SessionHistory = () => {
               value={value}
               onChange={(event, newValue) => {
                 if (typeof newValue === "string") {
-                  setValue({
-                    name: newValue,
-                  });
-                } else {
+                  // ignore other
+                } else if (newValue) {
                   setValue(newValue);
+                  getSummarizeOfPatient(newValue.id)
+                    .then((data) => {
+                      console.log("summary res:", data);
+                    })
+                    .catch((error) => {
+                      console.log(
+                        "Error in fetching summarize of patient:",
+                        error
+                      );
+                    });
                 }
               }}
               filterOptions={(options, params) => {
