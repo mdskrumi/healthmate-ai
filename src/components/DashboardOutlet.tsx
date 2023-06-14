@@ -98,8 +98,7 @@ const DashboardOutlet: React.FC = () => {
       <AppBar
         position="fixed"
         sx={{
-          width: `calc(100% - ${drawerWidth}px)`,
-          ml: `${drawerWidth}px`,
+          width: `calc(100% - 195px)`,
         }}
         color={"inherit"}
         elevation={0}
@@ -110,7 +109,7 @@ const DashboardOutlet: React.FC = () => {
             component="div"
             sx={{ flexGrow: 1, marginLeft: "16px" }}
           >
-            <div>Good Morning, {userName}!</div>
+            <div>Greetings, {userName}!</div>
             <div className="text-sm">{userMessage}</div>
           </Typography>
           <div>

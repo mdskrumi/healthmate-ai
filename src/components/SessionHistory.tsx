@@ -1,141 +1,43 @@
 import React, { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 
 import { fetchPatinets } from "../api/patients";
+import { getSummarizeOfPatient, ISummarize } from "../api/conversations";
+import { SummaryCard } from "./SummaryCard";
+import Loading from "./Loading";
+import ErrorMessageComponent from "./ErrorMessageComponent";
 
 interface PatientOptionType {
+  id: number;
   inputValue?: string;
   name: string;
 }
 
 const filter = createFilterOptions<PatientOptionType>();
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-  price: number
-) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: "2020-01-05",
-        customerId: "11091700",
-        amount: 3,
-      },
-      {
-        date: "2020-01-02",
-        customerId: "Anonymous",
-        amount: 1,
-      },
-    ],
-  };
-}
-
-function Row(props: { row: ReturnType<typeof createData> }) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
-
-  return (
-    <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.name}
-        </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                History
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell component="th" scope="row">
-                        {historyRow.date}
-                      </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
-                      <TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  );
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 4.99),
-  createData("Eclair", 262, 16.0, 24, 6.0, 3.79),
-  createData("Cupcake", 305, 3.7, 67, 4.3, 2.5),
-  createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
-];
-
 const SessionHistory = () => {
-  const [value, setValue] = React.useState<PatientOptionType | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [patient, setPatient] = React.useState<PatientOptionType | null>(null);
   const [patients, setPatients] = useState<PatientOptionType[]>([]);
 
+  const [summarizes, setSummarizes] = useState<ISummarize[]>([]);
+
   useEffect(() => {
+    setErrorMessage("");
+    setIsLoading(true);
     fetchPatinets()
       .then((data) => {
         setPatients(data);
       })
       .catch((error) => {
         console.log("Error fetching patients", error);
+        setErrorMessage("Something went wrong during fetching patients");
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
@@ -143,20 +45,39 @@ const SessionHistory = () => {
     <div>
       <div className="flex flex-col">
         <div className="w-full">
+          <Loading isLoading={isLoading} />
+          <ErrorMessageComponent message={errorMessage} />
           <div className="pb-10">
             <div className="w-full pb-5">
               <h3>Please select a patient:</h3>
             </div>
 
             <Autocomplete
-              value={value}
+              value={patient}
               onChange={(event, newValue) => {
                 if (typeof newValue === "string") {
-                  setValue({
-                    name: newValue,
-                  });
-                } else {
-                  setValue(newValue);
+                  // ignore other
+                } else if (newValue) {
+                  setPatient(newValue);
+                  setIsLoading(true);
+                  setErrorMessage("");
+                  getSummarizeOfPatient(newValue.id)
+                    .then((data: { results?: ISummarize[] }) => {
+                      console.log("summary res:", data);
+                      if (data && data?.results) setSummarizes(data.results);
+                    })
+                    .catch((error) => {
+                      console.log(
+                        "Error in fetching summarize of patient:",
+                        error
+                      );
+                      setErrorMessage(
+                        "Something went wrong during fetching patient information"
+                      );
+                    })
+                    .finally(() => {
+                      setIsLoading(false);
+                    });
                 }
               }}
               filterOptions={(options, params) => {
@@ -187,27 +108,34 @@ const SessionHistory = () => {
               )}
             />
           </div>
-          {value && value.name && (
-            <TableContainer component={Paper}>
-              <Table aria-label="collapsible table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell />
-                    <TableCell>Dessert (100g serving)</TableCell>
-                    <TableCell align="right">Calories</TableCell>
-                    <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                    <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                    <TableCell align="right">Protein&nbsp;(g)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <Row key={row.name} row={row} />
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
+          <div className="w-2/3 ">
+            {patient && (
+              <div className="w-full pb-5 ">
+                <p className="text-2xl ">
+                  Session history of {""}
+                  <span className="text-blue-500">{patient.name}</span>
+                </p>
+              </div>
+            )}
+            {patient && patient.name && summarizes.length > 0 ? (
+              summarizes.map((item) => {
+                return (
+                  <div key={item.id} className="py-5">
+                    <SummaryCard
+                      summarize={item.summarize}
+                      created_at={item.created_at}
+                    />
+                  </div>
+                );
+              })
+            ) : (
+              <div className="h-32 border items-center justify-center py-10">
+                <p className="items-center justify-center text-center text-gray-500">
+                  No history found
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
