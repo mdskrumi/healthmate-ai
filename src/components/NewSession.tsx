@@ -19,7 +19,7 @@ interface PatientOptionType {
 const filter = createFilterOptions<PatientOptionType>();
 
 const NewSession = () => {
-  const [value, setValue] = React.useState<PatientOptionType | null>(null);
+  const [patient, setPatient] = React.useState<PatientOptionType | null>(null);
 
   const [refreshPatients, setRefreshPatients] = useState(true);
 
@@ -59,12 +59,12 @@ const NewSession = () => {
 
   const onConversationSubmit = async () => {
     try {
-      if (!value?.id) {
+      if (!patient?.id) {
         return;
       }
       const response = await sendConversation({
         conversation: message,
-        patient: value.id,
+        patient: patient.id,
       });
 
       console.log("response at onConversationSubmit", response);
@@ -75,7 +75,7 @@ const NewSession = () => {
   };
 
   const handleSessionAction = () => {
-    if (value && value.name) {
+    if (patient && patient.name) {
       if (sessionStarted) {
         setSessionStarted(!sessionStarted);
       } else {
@@ -114,34 +114,34 @@ const NewSession = () => {
               </div>
 
               <Autocomplete
-                value={value}
+                value={patient}
                 onChange={(event, newValue) => {
                   if (typeof newValue === "string") {
-                    setValue({
+                    setPatient({
                       name: newValue,
                     });
                   } else if (newValue && newValue.inputValue) {
-                    // Create a new value from the user input
+                    // Create a new patient from the user input
                     const newPatient = {
                       name: newValue.inputValue,
                     };
                     createPatinet(newPatient)
                       .then((data) => {
                         setRefreshPatients(true);
-                        setValue(data);
+                        setPatient(data);
                       })
                       .catch((error) => {
                         console.log("Error creating new patient:", error);
                       });
                   } else {
-                    setValue(newValue);
+                    setPatient(newValue);
                   }
                 }}
                 filterOptions={(options, params) => {
                   const filtered = filter(options, params);
 
                   const { inputValue } = params;
-                  // Suggest the creation of a new value
+                  // Suggest the creation of a new patient
                   const isExisting = options.some(
                     (option) => inputValue === option.name
                   );
@@ -184,7 +184,7 @@ const NewSession = () => {
                 <Button
                   variant="outlined"
                   onClick={handleSessionAction}
-                  disabled={!Boolean(value && value.name)}
+                  disabled={!Boolean(patient && patient.name)}
                 >
                   {sessionStarted ? "Back" : "Start Session"}
                 </Button>
@@ -203,11 +203,11 @@ const NewSession = () => {
                   {sessionStarted ? "Back" : "Start Session"}
                 </Button>
               </div>
-              {value && (
+              {patient && (
                 <div className="w-full pb-5">
                   <p className="text-lg">
                     Session with{" "}
-                    <span className="text-blue-500">{value.name}</span>
+                    <span className="text-blue-500">{patient.name}</span>
                   </p>
                 </div>
               )}
@@ -215,7 +215,7 @@ const NewSession = () => {
           )}
         </div>
       </div>
-      {value && value.name && sessionStarted && (
+      {patient && patient.name && sessionStarted && (
         <>
           <div className="flex justify-center items-center gap-10 p-10">
             <button
