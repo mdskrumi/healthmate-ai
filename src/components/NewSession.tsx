@@ -13,6 +13,8 @@ import Loading from "./Loading";
 import ErrorMessageComponent from "./ErrorMessageComponent";
 import ListeningComponent from "./ListeningComponent";
 
+import Image from "../assets/bg.png";
+
 interface PatientOptionType {
   inputValue?: string;
   id?: number;
@@ -125,121 +127,135 @@ const NewSession = () => {
   return (
     <div>
       <div className="flex flex-col">
-        <div className="w-full">
-          <Loading isLoading={isLoading} />
-          <ErrorMessageComponent message={errorMessage} />
-          {!sessionStarted ? (
-            <>
-              <div className="w-full pb-5">
-                <h3>Please select a patient:</h3>
-              </div>
-
-              <Autocomplete
-                value={patient}
-                onChange={(event, newValue) => {
-                  if (typeof newValue === "string") {
-                    setPatient({
-                      name: newValue,
-                    });
-                  } else if (newValue && newValue.inputValue) {
-                    // Create a new patient from the user input
-                    const newPatient = {
-                      name: newValue.inputValue,
-                    };
-                    setIsLoading(true);
-                    createPatinet(newPatient)
-                      .then((data) => {
-                        setRefreshPatients(true);
-                        setPatient(data);
-                        setErrorMessage("");
-                      })
-                      .catch((error) => {
-                        console.log("Error creating new patient:", error);
-                      })
-                      .finally(() => {
-                        setIsLoading(false);
-                      });
-                  } else {
-                    setPatient(newValue);
-                  }
-                }}
-                filterOptions={(options, params) => {
-                  const filtered = filter(options, params);
-
-                  const { inputValue } = params;
-                  // Suggest the creation of a new patient
-                  const isExisting = options.some(
-                    (option) => inputValue === option.name
-                  );
-                  if (inputValue !== "" && !isExisting) {
-                    filtered.push({
-                      inputValue,
-                      name: `Add "${inputValue}"`,
-                    });
-                  }
-
-                  return filtered;
-                }}
-                selectOnFocus
-                clearOnBlur
-                handleHomeEndKeys
-                id="free-solo-with-text-demo"
-                options={patients}
-                getOptionLabel={(option) => {
-                  // Value selected with enter, right from the input
-                  if (typeof option === "string") {
-                    return option;
-                  }
-                  // Add "xxx" option created dynamically
-                  if (option.inputValue) {
-                    return option.inputValue;
-                  }
-                  // Regular option
-                  return option.name;
-                }}
-                renderOption={(props, option) => (
-                  <li {...props}>{option.name}</li>
-                )}
-                sx={{ width: 300 }}
-                freeSolo
-                renderInput={(params) => (
-                  <TextField {...params} label="Type patient name" />
-                )}
-              />
-              <div className="pt-5 pb-5">
-                <Button
-                  variant="outlined"
-                  onClick={handleSessionAction}
-                  disabled={!Boolean(patient && patient.name)}
-                >
-                  {sessionStarted ? "Back" : "Start Session"}
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="pt-2 pb-5">
-                <Button
-                  variant="text"
-                  onClick={handleSessionAction}
-                  startIcon={<ArrowBackIos />}
-                  size="small"
-                  color="secondary"
-                >
-                  {sessionStarted ? "Back" : "Start Session"}
-                </Button>
-              </div>
-              {patient && (
-                <div className="w-full pb-5">
-                  <p className="text-2xl">
-                    Session with{" "}
-                    <span className="text-blue-500">{patient.name}</span>
+        <Loading isLoading={isLoading} />
+        <ErrorMessageComponent message={errorMessage} />
+        {!sessionStarted ? (
+          <div className="fixed h-[calc(100vh-64px)] overflow-y-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 content-center items-center">
+              <div className="">
+                <div>
+                  <h2 className="mb-2 font-bold">Healthmate AI</h2>
+                  <p className="mb-5 max-w-sm">
+                    Bringing Efficiency to Healthcare Consultations & Let AI
+                    Handle the Summarization, While You Focus on Care.
                   </p>
                 </div>
-              )}
-            </>
-          )}
-        </div>
+                <div className="w-full pb-2">
+                  <label className="text-sm font-medium">
+                    Enter patient name for starting the session
+                  </label>
+                </div>
+
+                <Autocomplete
+                  value={patient}
+                  onChange={(event, newValue) => {
+                    if (typeof newValue === "string") {
+                      setPatient({
+                        name: newValue,
+                      });
+                    } else if (newValue && newValue.inputValue) {
+                      // Create a new patient from the user input
+                      const newPatient = {
+                        name: newValue.inputValue,
+                      };
+                      setIsLoading(true);
+                      createPatinet(newPatient)
+                        .then((data) => {
+                          setRefreshPatients(true);
+                          setPatient(data);
+                          setErrorMessage("");
+                        })
+                        .catch((error) => {
+                          console.log("Error creating new patient:", error);
+                        })
+                        .finally(() => {
+                          setIsLoading(false);
+                        });
+                    } else {
+                      setPatient(newValue);
+                    }
+                  }}
+                  filterOptions={(options, params) => {
+                    const filtered = filter(options, params);
+
+                    const { inputValue } = params;
+                    // Suggest the creation of a new patient
+                    const isExisting = options.some(
+                      (option) => inputValue === option.name
+                    );
+                    if (inputValue !== "" && !isExisting) {
+                      filtered.push({
+                        inputValue,
+                        name: `Add "${inputValue}"`,
+                      });
+                    }
+
+                    return filtered;
+                  }}
+                  selectOnFocus
+                  clearOnBlur
+                  handleHomeEndKeys
+                  id="free-solo-with-text-demo"
+                  options={patients}
+                  getOptionLabel={(option) => {
+                    // Value selected with enter, right from the input
+                    if (typeof option === "string") {
+                      return option;
+                    }
+                    // Add "xxx" option created dynamically
+                    if (option.inputValue) {
+                      return option.inputValue;
+                    }
+                    // Regular option
+                    return option.name;
+                  }}
+                  renderOption={(props, option) => (
+                    <li {...props}>{option.name}</li>
+                  )}
+                  sx={{ width: 300 }}
+                  freeSolo
+                  renderInput={(params) => (
+                    <TextField {...params} label="Patient name" />
+                  )}
+                />
+                <div className="pt-5 pb-5">
+                  <Button
+                    variant="contained"
+                    onClick={handleSessionAction}
+                    disabled={!Boolean(patient && patient.name)}
+                  >
+                    {sessionStarted ? "Back" : "Start Session"}
+                  </Button>
+                </div>
+              </div>
+              <div className="w-full">
+                <img src={Image} />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="pt-2 pb-5">
+              <Button
+                variant="text"
+                onClick={handleSessionAction}
+                startIcon={<ArrowBackIos />}
+                size="small"
+                color="secondary"
+              >
+                {sessionStarted ? "Back" : "Start Session"}
+              </Button>
+            </div>
+            {patient && (
+              <div className="w-full pb-5">
+                <p className="text-2xl">
+                  Session with{" "}
+                  <span className="text-blue-500">{patient.name}</span>
+                </p>
+              </div>
+            )}
+          </>
+        )}
       </div>
       {patient && patient.name && sessionStarted && (
         <>

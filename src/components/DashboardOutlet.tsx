@@ -98,8 +98,7 @@ const DashboardOutlet: React.FC = () => {
       <AppBar
         position="fixed"
         sx={{
-          width: `calc(100% - ${drawerWidth}px)`,
-          ml: `${drawerWidth}px`,
+          width: `calc(100% - 195px)`,
         }}
         color={"inherit"}
         elevation={0}
