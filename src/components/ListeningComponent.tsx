@@ -1,6 +1,4 @@
 import React from "react";
-import CircularProgress from "@mui/material/CircularProgress";
-import Typography from "@mui/material/Typography";
 import { MicOff } from "@mui/icons-material";
 
 import Lottie from "lottie-react";

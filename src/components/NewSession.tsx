@@ -229,7 +229,7 @@ const NewSession = () => {
                 </div>
               </div>
               <div className="w-full">
-                <img src={Image} />
+                <img src={Image} alt="mic" />
               </div>
             </div>
           </div>
