@@ -8,7 +8,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-
+import MenuIcon from "@mui/icons-material/Menu";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import {
@@ -62,12 +62,12 @@ const menus: IMenu[] = [
 ];
 
 const DashboardOutlet: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedMenu, setSelectedMenu] = useState<null | string>(null);
 
   const userName = "Doctor";
-  const userMessage =
-    "I hope you are in good mood because many patients are waiting for you!";
+  const userMessage = "Have a great day!";
 
   const navigate = useNavigate();
 
@@ -92,40 +92,56 @@ const DashboardOutlet: React.FC = () => {
     }
   }, [location.pathname]);
 
+  const toggleDrawer =
+    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === "keydown" &&
+        ((event as React.KeyboardEvent).key === "Tab" ||
+          (event as React.KeyboardEvent).key === "Shift")
+      ) {
+        return;
+      }
+
+      setIsOpen(open);
+    };
+
+  const list = () => (
+    <Box
+      sx={{ width: "auto" }}
+      role="presentation"
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
+    >
+      <List>
+        {menus.map((menu, index) => (
+          <ListItem key={menu.id} disablePadding>
+            <ListItemButton>
+              <ListItemIcon>{<menu.icon />}</ListItemIcon>
+              <ListItemText
+                primary={menu.title}
+                onClick={() => handleOnMenuSelected(menu)}
+              />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
   return (
     <Box sx={{ display: "flex", bgcolor: "background.default" }}>
       <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{
-          width: `calc(100% - 195px)`,
-        }}
-        color={"inherit"}
-        elevation={0}
-      >
+      <AppBar position="fixed" color={"inherit"} elevation={0}>
         <Toolbar>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, marginLeft: "16px" }}
-          >
+          <ListItemIcon onClick={() => setIsOpen(!isOpen)}>
+            <MenuIcon />
+          </ListItemIcon>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <div>Greetings, {userName}!</div>
-            <div className="text-sm">{userMessage}</div>
+            <div className="text-xs">{userMessage}</div>
           </Typography>
           <div>
-            {/* <AccountCircleIcon fontSize={"large"} /> */}
             <AccountCircleTwoTone fontSize={"large"} color={"disabled"} />
-            {/* <IconButton
-              size="small"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenuOpen}
-              color="inherit"
-            >
-              <KeyboardArrowDown />
-            </IconButton> */}
           </div>
           <Menu
             id="menu-appbar"
@@ -148,51 +164,23 @@ const DashboardOutlet: React.FC = () => {
         </Toolbar>
         <Divider />
       </AppBar>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-        variant="permanent"
-        anchor="left"
-      >
-        <Toolbar>
-          <img src={logo} alt="Logo" />
+      <Drawer anchor={"left"} open={isOpen} onClose={toggleDrawer(false)}>
+        <Toolbar
+          sx={{
+            padding: 0,
+          }}
+        >
+          <img
+            src={logo}
+            alt="Logo"
+            width={250}
+            style={{ marginRight: "auto" }}
+          />
         </Toolbar>
         <Divider />
-        <List>
-          {menus.map((item, _) => (
-            <ListItem
-              key={item.title}
-              disablePadding
-              className={
-                selectedMenu && selectedMenu === item.id ? "bg-gray-100" : ""
-              }
-            >
-              <ListItemButton
-                onClick={() => handleOnMenuSelected(item)}
-                sx={{
-                  "& .MuiListItemIcon-root, & .MuiListItemText-root": {
-                    gap: 0,
-                    minWidth: "35px",
-                  },
-                }}
-              >
-                <ListItemIcon>{<item.icon />}</ListItemIcon>
-                <ListItemText primary={item.title} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        {list()}
       </Drawer>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
-      >
+      <Box component="main" sx={{ p: 3 }}>
         <Toolbar />
         <Outlet />
       </Box>

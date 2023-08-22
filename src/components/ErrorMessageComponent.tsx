@@ -9,7 +9,8 @@ const ErrorMessageComponent: React.FC<{
   return message ? (
     <Card
       sx={{
-        marginY: 2,
+        position: "absolute",
+        bottom: 0,
       }}
     >
       <CardContent>
