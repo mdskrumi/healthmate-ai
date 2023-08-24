@@ -36,34 +36,26 @@ const NewSession = () => {
   const [patients, setPatients] = useState<PatientOptionType[]>([]);
 
   const [summerize, setSummerize] = useState<string>("");
-  const [speaker, setSpeaker] = useState<"Doctor" | "Patient" | "None">("None");
-  const [message, setMessage] = useState<
-    {
-      speaker: "Doctor" | "Patient";
-      message: string;
-    }[]
-  >([]);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
 
   const { transcript, resetTranscript, browserSupportsSpeechRecognition } =
     useSpeechRecognition();
 
-  const handleSpeakerChange = (person: "Doctor" | "Patient") => {
-    if (speaker !== "None") {
-      setMessage((prev) => [
-        ...prev,
-        { speaker: speaker, message: transcript },
-      ]);
-    }
-    SpeechRecognition.stopListening();
-    if (person === speaker) {
-      setSpeaker("None");
-      resetTranscript();
-    } else {
-      setSpeaker(person);
-      resetTranscript();
-      SpeechRecognition.startListening({ continuous: true });
-    }
+  const toggleRecording = () => {
+    setIsRecording(!isRecording);
   };
+
+  useEffect(() => {
+    if (isRecording) {
+      SpeechRecognition.startListening({ continuous: true });
+    } else {
+      setMessage((prev) => prev + transcript);
+      SpeechRecognition.stopListening();
+    }
+  }, [isRecording]);
+
+  console.log(message);
 
   const onConversationSubmit = async () => {
     try {
@@ -72,7 +64,7 @@ const NewSession = () => {
         return;
       }
       const response = await sendConversation({
-        conversation: message,
+        conversation: { message },
         patient: patient.id,
       });
 
@@ -258,27 +250,12 @@ const NewSession = () => {
           </div>
           <div className="flex justify-center items-center gap-10 p-10">
             <ListeningComponent
-              isActive={speaker === "Doctor"}
-              speaker="DOCTOR"
-              onClick={() => handleSpeakerChange("Doctor")}
-            />
-            <ListeningComponent
-              isActive={speaker === "Patient"}
-              speaker="PATIENT"
-              onClick={() => handleSpeakerChange("Patient")}
+              isActive={isRecording}
+              speaker={isRecording ? "Recording" : "Record"}
+              onClick={() => toggleRecording()}
             />
           </div>
 
-          <div className="m-auto max-w-2xl w-[90vw] border-2 p-5">
-            {message.map((m, i) => (
-              <div
-                key={i}
-                className={`${
-                  m.speaker === "Doctor" ? "text-left" : "text-right"
-                }`}
-              >{`${m.speaker}: ${m.message}.`}</div>
-            ))}
-          </div>
           <div className="m-auto text-right max-w-2xl w-[90vw] pt-5">
             <Button variant="outlined" onClick={onConversationSubmit}>
               SUBMIT

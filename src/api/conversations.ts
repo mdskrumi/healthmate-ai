@@ -1,10 +1,5 @@
 import { API_URL_CONVERSATIONS } from "./config";
 
-export interface ISendConversation {
-  patient: number;
-  conversation: IMessage[];
-}
-
 export interface IMessage {
   speaker: "Doctor" | "Patient";
   message: string;
@@ -23,7 +18,7 @@ export interface IConversation {
   message: string;
 }
 
-export const sendConversation = async (data: ISendConversation) => {
+export const sendConversation = async (data: any) => {
   try {
     const response = await fetch(API_URL_CONVERSATIONS, {
       method: "POST",
