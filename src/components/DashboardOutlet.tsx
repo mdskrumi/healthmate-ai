@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,7 +9,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 import {
   AppBar,
@@ -34,8 +34,6 @@ import {
 // } from "@mui/icons-material";
 
 import logo from "../assets/logo.png";
-
-const drawerWidth = 210;
 
 interface IMenu {
   id: string;
@@ -64,14 +62,11 @@ const menus: IMenu[] = [
 const DashboardOutlet: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedMenu, setSelectedMenu] = useState<null | string>(null);
 
   const userName = "Doctor";
   const userMessage = "Have a great day!";
 
   const navigate = useNavigate();
-
-  const location = useLocation();
 
   // const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
   //   setAnchorEl(event.currentTarget);
@@ -82,15 +77,8 @@ const DashboardOutlet: React.FC = () => {
   };
 
   const handleOnMenuSelected = (menu: IMenu) => {
-    setSelectedMenu(menu.id);
     navigate(menu.url);
   };
-
-  useEffect(() => {
-    if (location.pathname === "/") {
-      setSelectedMenu(null);
-    }
-  }, [location.pathname]);
 
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {

@@ -52,8 +52,9 @@ const NewSession = () => {
     } else {
       setMessage((prev) => prev + transcript);
       SpeechRecognition.stopListening();
+      resetTranscript();
     }
-  }, [isRecording]);
+  }, [isRecording, transcript, resetTranscript]);
 
   console.log(message);
 
