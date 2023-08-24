@@ -233,32 +233,26 @@ const NewSession = () => {
               </div>
             </div>
           </div>
-        ) : (
-          <>
-            <div className="pt-2 pb-5">
-              <Button
-                variant="text"
-                onClick={handleSessionAction}
-                startIcon={<ArrowBackIos />}
-                size="small"
-                color="secondary"
-              >
-                {sessionStarted ? "Back" : "Start Session"}
-              </Button>
-            </div>
-            {patient && (
-              <div className="w-full pb-5">
-                <p className="text-2xl">
-                  Session with{" "}
-                  <span className="text-blue-500">{patient.name}</span>
-                </p>
-              </div>
-            )}
-          </>
-        )}
+        ) : null}
       </div>
       {patient && patient.name && sessionStarted && (
-        <>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="pt-2 pb-5">
+            <Button
+              variant="text"
+              onClick={handleSessionAction}
+              startIcon={<ArrowBackIos />}
+              size="small"
+              color="secondary"
+            >
+              {sessionStarted ? "Back" : "Start Session"}
+            </Button>
+          </div>
+          <div className="w-full pb-5">
+            <p className="text-2xl">
+              Session with <span className="text-blue-500">{patient.name}</span>
+            </p>
+          </div>
           <div className="flex justify-center items-center">
             <p className="text-2xl">Conversation between Doctor and Patient</p>
           </div>
@@ -299,7 +293,7 @@ const NewSession = () => {
               {/* {summerize} */}
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );
