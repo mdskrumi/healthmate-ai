@@ -42,7 +42,7 @@ const SessionHistory = () => {
   }, []);
 
   return (
-    <div className="w-full flex flex-col items-baseline">
+    <div className="w-full flex flex-col items-center">
       <Loading isLoading={isLoading} />
       <ErrorMessageComponent message={errorMessage} />
       <div className="pb-10 m-auto">

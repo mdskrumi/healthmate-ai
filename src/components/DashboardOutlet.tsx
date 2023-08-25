@@ -117,7 +117,7 @@ const DashboardOutlet: React.FC = () => {
   );
 
   return (
-    <Box sx={{ display: "flex", bgcolor: "background.default" }}>
+    <Box sx={{ bgcolor: "background.default" }}>
       <CssBaseline />
       <AppBar position="fixed" color={"inherit"} elevation={0}>
         <Toolbar>

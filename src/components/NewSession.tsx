@@ -229,7 +229,7 @@ const NewSession = () => {
         ) : null}
       </div>
       {patient && patient.name && sessionStarted && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div>
           <div className="pt-2 pb-5">
             <Button
               variant="text"
@@ -243,13 +243,14 @@ const NewSession = () => {
           </div>
           <div className="w-full pb-5">
             <p className="text-2xl">
-              Session with <span className="text-blue-500">{patient.name}</span>
+              Session with{" "}
+              <span className="text-blue-500 capitalize">{patient.name}</span>
             </p>
           </div>
           <div className="flex justify-center items-center">
             <p className="text-2xl">Conversation between Doctor and Patient</p>
           </div>
-          <div className="flex justify-center items-center gap-10 p-10">
+          <div className="flex justify-center items-center p-10">
             <ListeningComponent
               isActive={isRecording}
               speaker={isRecording ? "Recording" : "Record"}
@@ -258,14 +259,18 @@ const NewSession = () => {
           </div>
 
           <div className="m-auto text-right max-w-2xl w-[90vw] pt-5">
-            <Button variant="outlined" onClick={onConversationSubmit}>
+            <Button
+              variant="contained"
+              sx={{ width: "100%" }}
+              onClick={onConversationSubmit}
+            >
               SUBMIT
             </Button>
           </div>
 
           {summerize && (
             <div
-              className="m-auto max-w-2xl w-[90vw] border-2 p-5"
+              className="m-auto max-w-2xl w-[90vw] border-2 mt-5 p-5"
               dangerouslySetInnerHTML={{ __html: summerize }}
             >
               {/* {summerize} */}
