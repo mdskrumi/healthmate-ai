@@ -14,9 +14,11 @@ export const SummaryCard: React.FC<{
         <Typography gutterBottom variant="h5" component="div">
           {`${dayjs(created_at).format("MMMM D, YYYY h:mm A")}`}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {summarize}
-        </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          dangerouslySetInnerHTML={{ __html: summarize }}
+        />
       </CardContent>
     </Card>
   );

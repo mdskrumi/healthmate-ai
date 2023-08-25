@@ -249,7 +249,7 @@ const NewSession = () => {
             </p>
           </div>
 
-          <div className="flex justify-center items-center p-5">
+          <div className="flex justify-center items-center p-5 pt-8">
             <ListeningComponent
               isActive={isRecording}
               speaker={isRecording ? "Recording" : "Record"}
@@ -258,11 +258,11 @@ const NewSession = () => {
           </div>
 
           <div
-            className="m-auto text-right max-w-2xl w-[90vw] pt-3"
+            className="m-auto text-right max-w-2xl w-[80vw] pt-3"
             style={{ display: summerize === "" ? "block" : "none" }}
           >
             <Button
-              variant="contained"
+              variant="outlined"
               sx={{ width: "100%" }}
               onClick={onConversationSubmit}
             >
