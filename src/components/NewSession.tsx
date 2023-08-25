@@ -56,8 +56,6 @@ const NewSession = () => {
     }
   }, [isRecording, transcript, resetTranscript]);
 
-  console.log(message);
-
   const onConversationSubmit = async () => {
     try {
       setIsLoading(true);
@@ -81,6 +79,7 @@ const NewSession = () => {
   };
 
   const handleSessionAction = () => {
+    setSummerize("");
     if (patient && patient.name) {
       if (sessionStarted) {
         setSessionStarted(!sessionStarted);
@@ -230,27 +229,27 @@ const NewSession = () => {
       </div>
       {patient && patient.name && sessionStarted && (
         <div>
-          <div className="pt-2 pb-5">
+          <div className="pb-2">
             <Button
               variant="text"
               onClick={handleSessionAction}
               startIcon={<ArrowBackIos />}
               size="small"
-              color="secondary"
+              style={{ color: "#616161" }}
             >
               {sessionStarted ? "Back" : "Start Session"}
             </Button>
           </div>
-          <div className="w-full pb-5">
+          <div className="w-full">
             <p className="text-2xl">
               Session with{" "}
-              <span className="text-blue-500 capitalize">{patient.name}</span>
+              <span className="text-blue-500 capitalize font-semibold">
+                {patient.name}
+              </span>
             </p>
           </div>
-          <div className="flex justify-center items-center">
-            <p className="text-2xl">Conversation between Doctor and Patient</p>
-          </div>
-          <div className="flex justify-center items-center p-10">
+
+          <div className="flex justify-center items-center p-5">
             <ListeningComponent
               isActive={isRecording}
               speaker={isRecording ? "Recording" : "Record"}
@@ -258,7 +257,10 @@ const NewSession = () => {
             />
           </div>
 
-          <div className="m-auto text-right max-w-2xl w-[90vw] pt-5">
+          <div
+            className="m-auto text-right max-w-2xl w-[90vw] pt-3"
+            style={{ display: summerize === "" ? "block" : "none" }}
+          >
             <Button
               variant="contained"
               sx={{ width: "100%" }}
@@ -269,11 +271,12 @@ const NewSession = () => {
           </div>
 
           {summerize && (
-            <div
-              className="m-auto max-w-2xl w-[90vw] border-2 mt-5 p-5"
-              dangerouslySetInnerHTML={{ __html: summerize }}
-            >
-              {/* {summerize} */}
+            <div className="m-auto text-justify max-w-2xl w-[90vw] pt-5">
+              <h4 className="text-xl">Summary</h4>
+              <div
+                className="m-auto max-w-2xl w-[90vw] text-left border-2 mt-1 p-5"
+                dangerouslySetInnerHTML={{ __html: summerize }}
+              />
             </div>
           )}
         </div>

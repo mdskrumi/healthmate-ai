@@ -15,8 +15,8 @@ const ListeningComponent: React.FC<{
 }> = ({ isActive, speaker, height = 50, width = 100, onClick }) => {
   return (
     <button
-      className={`block max-w-sm p-6 border border-gray-200 rounded-3xl shadow ${
-        speaker === "Patient" ? "bg-green-300" : "bg-white hover:bg-gray-100"
+      className={`block max-w-2xl w-full p-6 border border-gray-200 rounded-3xl shadow ${
+        isActive ? "bg-blue-100" : "bg-white hover:bg-gray-100"
       }`}
       onClick={onClick}
     >
